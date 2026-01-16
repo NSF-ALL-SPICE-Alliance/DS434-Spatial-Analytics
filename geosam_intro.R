@@ -1,6 +1,7 @@
 library(geosam)
 library(sf)
 library(terra)
+
 Sys.setenv(PROJ_LIB = "/opt/homebrew/Cellar/proj/9.4.1/share/proj")
 
 # Try the detection again
