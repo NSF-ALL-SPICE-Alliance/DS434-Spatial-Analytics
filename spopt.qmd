@@ -1,0 +1,463 @@
+---
+title: "Spatial Optimization for Health Clinic Placement on Oahu"
+format: html
+editor: visual
+---
+
+## Introduction
+
+This analysis identifies optimal locations for new health clinics on Oahu, Hawaii using spatial optimization. We combine public health data, zoning constraints, and existing facility locations to determine where new clinics would best serve populations with the greatest need.
+
+## Setup
+
+```{r}
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(tidycensus)
+library(CDCPLACES)
+library(sf)
+library(mapview)
+library(gstat)
+library(spopt)
+library(here)
+```
+
+## Load Population Data
+
+We start by obtaining census tract boundaries and population counts for Honolulu County (Oahu) from the American Community Survey using the `tidycensus` package.
+
+```{r}
+# Get tract geometries and population
+all_tracts_geo <- get_acs(
+  geography = "tract",
+  variables = "B01003_001",  # Total population
+  state = "HI",
+  county = "Honolulu",
+  geometry = TRUE,
+  year = 2022
+)
+
+# View the spatial distribution of population
+mapview(all_tracts_geo, 
+        zcol = "estimate",
+        layer.name = "Population",
+        col.regions = RColorBrewer::brewer.pal(9, "YlGnBu"))
+```
+
+Oahu contains `r nrow(all_tracts_geo)` census tracts with a total population of `r format(sum(all_tracts_geo$estimate), big.mark = ",")`.
+
+## Load CDC PLACES Health Data
+
+The CDC PLACES dataset provides census tract-level estimates of chronic disease prevalence, health behaviors, and preventive service use. We fetch multiple health measures using the `CDCPLACES` package.
+
+```{r}
+#| message: false
+
+# View available measures
+dict <- get_dictionary()
+
+# Fetch health measures in batches to avoid API limits
+batch_size <- 5
+measure_batches <- split(dict$measureid, 
+                        ceiling(seq_along(dict$measureid) / batch_size))
+
+fetch_batch <- function(measures, batch_num) {
+  result <- tryCatch({
+    get_places(
+      state = "HI",
+      geography = "census",
+      measure = measures,
+      geometry = TRUE
+    ) |>
+      filter(str_detect(locationname, "^15003"))  # Honolulu County
+  }, error = function(e) {
+    return(NULL)
+  })
+  Sys.sleep(1)
+  return(result)
+}
+
+oahu_all_measures <- map2_dfr(measure_batches,
+                               seq_along(measure_batches),
+                               fetch_batch)
+
+# Pivot to wide format (one row per tract)
+oahu_wide_all <- oahu_all_measures |>
+  select(locationid, measureid, data_value, geometry) |>
+  pivot_wider(names_from = measureid, values_from = data_value) |>
+  st_as_sf()
+```
+
+## Evaluate Measure Quality
+
+Before selecting health measures for our analysis, we evaluate each measure's availability and spatial variation across Oahu tracts.
+
+```{r}
+measure_summary <- dict |>
+  rowwise() |>
+  mutate(
+    measure_exists = measureid %in% names(oahu_wide_all),
+    n_tracts = if(measure_exists) nrow(oahu_wide_all) else NA_integer_,
+    n_available = if(measure_exists) sum(!is.na(oahu_wide_all[[measureid]])) else NA_integer_,
+    pct_available = if(measure_exists) (n_available / n_tracts) * 100 else NA_real_,
+    variance = if(measure_exists) var(oahu_wide_all[[measureid]], na.rm = TRUE) else NA_real_,
+    mean_value = if(measure_exists) mean(oahu_wide_all[[measureid]], na.rm = TRUE) else NA_real_,
+    sd_value = if(measure_exists) sd(oahu_wide_all[[measureid]], na.rm = TRUE) else NA_real_,
+    min_value = if(measure_exists) min(oahu_wide_all[[measureid]], na.rm = TRUE) else NA_real_,
+    max_value = if(measure_exists) max(oahu_wide_all[[measureid]], na.rm = TRUE) else NA_real_,
+    cv = if(!is.na(mean_value) && mean_value != 0) sd_value / mean_value else NA_real_
+  ) |>
+  ungroup() |>
+  select(measureid, measure_short_name, category_name, pct_available, 
+         mean_value, variance, cv, min_value, max_value) |>
+  arrange(desc(pct_available), desc(cv))
+
+# Display top measures by spatial variation
+measure_summary |>
+  filter(pct_available == 100) |>
+  select(measureid, measure_short_name, cv, mean_value, variance) |>
+  head(10) |>
+  knitr::kable(digits = 2, caption = "Top 10 measures by coefficient of variation")
+```
+
+The coefficient of variation (CV) indicates how much a measure varies across tracts relative to its mean. Higher CV values identify measures where spatial targeting would be most impactful.
+
+## Select Health Measures
+
+We select six measures representing different dimensions of health need: social determinants, access barriers, health status, disability, and chronic disease.
+
+```{r}
+selected_measures <- c(
+  "SHUTUTILITY",  # Utilities services threat
+  "LACKTRPT",     # Transportation barriers
+  "ACCESS2",      # Lack of health insurance
+  "GHLTH",        # Fair/poor general health
+  "DISABILITY",   # Any disability
+  "DIABETES"      # Diagnosed diabetes
+)
+
+oahu_health_wide <- oahu_wide_all |>
+  select(locationid, geometry, all_of(selected_measures))
+
+# Map one example measure
+mapview(oahu_health_wide,
+        zcol = "DIABETES",
+        layer.name = "Diabetes %",
+        col.regions = RColorBrewer::brewer.pal(9, "YlOrRd"))
+```
+
+## Identify Data Gaps
+
+CDC PLACES data is not available for all census tracts. We identify which tracts have complete health data and which require imputation.
+
+```{r}
+all_tracts_geo <- all_tracts_geo |>
+  mutate(
+    has_health_data = GEOID %in% oahu_health_wide$locationid,
+    data_status = if_else(has_health_data, 
+                         "Has CDC PLACES data", 
+                         "Missing CDC data")
+  )
+
+# Summarize data coverage
+coverage_summary <- all_tracts_geo |>
+  st_drop_geometry() |>
+  group_by(data_status) |>
+  summarize(
+    n_tracts = n(),
+    mean_pop = mean(estimate),
+    total_pop = sum(estimate),
+    pct_of_total = (total_pop / sum(all_tracts_geo$estimate)) * 100
+  )
+
+knitr::kable(coverage_summary, digits = 1, 
+             caption = "CDC PLACES data coverage on Oahu")
+
+# Visualize the data gap
+mapview(all_tracts_geo,
+        zcol = "data_status",
+        col.regions = c("lightgreen", "pink"),
+        layer.name = "Data Coverage")
+```
+
+Approximately half of Oahu's tracts lack CDC PLACES data. Missing tracts tend to be smaller in population but represent `r round(coverage_summary$pct_of_total[coverage_summary$data_status == "Missing CDC data"], 1)`% of Oahu's total population.
+
+## Spatial Imputation
+
+We use inverse distance weighting (IDW) to estimate health measure values for tracts without data. IDW predicts unknown values based on nearby known values, with closer tracts having more influence.
+
+```{r}
+# Separate tracts with and without health data
+tracts_with_health <- all_tracts_geo |>
+  filter(has_health_data) |>
+  left_join(oahu_health_wide |> st_drop_geometry(), 
+            by = c("GEOID" = "locationid")) |>
+  st_centroid()
+
+tracts_without_health <- all_tracts_geo |>
+  filter(!has_health_data) |>
+  filter(!st_is_empty(geometry)) |>
+  st_make_valid() |>
+  filter(estimate > 0) |>
+  st_centroid()
+
+# Impute each measure using IDW
+diabetes_imputed <- idw(DIABETES ~ 1, tracts_with_health, 
+                        tracts_without_health, idp = 2)
+tracts_without_health$DIABETES <- diabetes_imputed$var1.pred
+
+ghlth_imputed <- idw(GHLTH ~ 1, tracts_with_health, 
+                     tracts_without_health, idp = 2)
+tracts_without_health$GHLTH <- ghlth_imputed$var1.pred
+
+access_imputed <- idw(ACCESS2 ~ 1, tracts_with_health, 
+                      tracts_without_health, idp = 2)
+tracts_without_health$ACCESS2 <- access_imputed$var1.pred
+
+shututility_imputed <- idw(SHUTUTILITY ~ 1, tracts_with_health,
+                           tracts_without_health, idp = 2)
+tracts_without_health$SHUTUTILITY <- shututility_imputed$var1.pred
+
+lacktrpt_imputed <- idw(LACKTRPT ~ 1, tracts_with_health,
+                        tracts_without_health, idp = 2)
+tracts_without_health$LACKTRPT <- lacktrpt_imputed$var1.pred
+
+disability_imputed <- idw(DISABILITY ~ 1, tracts_with_health,
+                          tracts_without_health, idp = 2)
+tracts_without_health$DISABILITY <- disability_imputed$var1.pred
+
+# Combine real and imputed data
+oahu_complete <- bind_rows(
+  tracts_with_health |> mutate(imputed = FALSE),
+  tracts_without_health |> mutate(imputed = TRUE)
+)
+```
+
+After imputation, we have complete health data for `r nrow(oahu_complete)` tracts (8 tracts with zero population or invalid geometry were excluded).
+
+## Load Existing Health Facilities
+
+We load the locations of existing hospitals and clinics on Oahu to account for current service coverage.
+
+```{r}
+hospitals_and_clinics <- st_read(here("data/Hospitals__and_Clinics.geojson"),
+                                 quiet = TRUE)
+
+hospitals_and_clinics <- hospitals_and_clinics |>
+  mutate(facility_type = case_when(
+    type == 1 ~ "Hospital",
+    type == 2 ~ "Clinic",
+    TRUE ~ "Other"
+  ))
+
+mapview(hospitals_and_clinics,
+        zcol = "facility_type",
+        layer.name = "Existing Facilities")
+```
+
+## Load Zoning Data
+
+Health clinics can only be built in zones where they are legally permitted. We load Honolulu's zoning data and filter to allowable zones based on the Land Use Ordinance.
+
+```{r}
+zoning <- st_read(here("data/Zoning.geojson"), quiet = TRUE)
+
+# Zones where general medical services (clinics) are permitted
+allowable_clinic_zones <- c(
+  "AMX-1", "AMX-2", "AMX-3",  # Apartment Mixed Use
+  "Resort",                    # Resort District
+  "B-1", "B-2",               # Business Districts
+  "BMX-3", "BMX-4",           # Business Mixed Use
+  "IMX-1"                     # Industrial Mixed Use
+)
+
+allowable_land <- zoning |>
+  filter(zone_class %in% allowable_clinic_zones) |>
+  st_make_valid()
+
+mapview(allowable_land,
+        col.regions = "lightgreen",
+        alpha.regions = 0.3,
+        layer.name = "Allowable Zoning")
+```
+
+Out of `r nrow(zoning)` zoning polygons, `r nrow(allowable_land)` permit health clinics.
+
+## Calculate Composite Health Need
+
+We create a composite measure of health need that combines disease burden, access barriers, and distance to existing facilities.
+
+```{r}
+# Ensure consistent CRS
+oahu_complete <- st_transform(oahu_complete, 4326)
+hospitals_and_clinics <- st_transform(hospitals_and_clinics, 4326)
+allowable_land <- st_transform(allowable_land, 4326)
+
+# Get population data
+oahu_population <- get_acs(
+  geography = "tract",
+  variables = "B01003_001",
+  state = "HI",
+  county = "Honolulu",
+  year = 2022
+) |>
+  select(GEOID, population = estimate)
+
+# Join population to complete health data
+oahu_complete <- oahu_complete |>
+  left_join(oahu_population, by = "GEOID") |>
+  filter(!is.na(population))
+
+# Calculate distance to nearest existing facility
+tract_centroids <- st_centroid(oahu_complete)
+dist_matrix <- st_distance(tract_centroids, hospitals_and_clinics)
+
+oahu_complete <- oahu_complete |>
+  mutate(
+    dist_to_nearest_m = as.numeric(apply(dist_matrix, 1, min)),
+    dist_to_nearest_km = dist_to_nearest_m / 1000,
+    
+    # Standardize measures (0-1 scale)
+    diabetes_scaled = (DIABETES - min(DIABETES, na.rm = TRUE)) / 
+      (max(DIABETES, na.rm = TRUE) - min(DIABETES, na.rm = TRUE)),
+    ghlth_scaled = (GHLTH - min(GHLTH, na.rm = TRUE)) / 
+      (max(GHLTH, na.rm = TRUE) - min(GHLTH, na.rm = TRUE)),
+    access_scaled = (ACCESS2 - min(ACCESS2, na.rm = TRUE)) / 
+      (max(ACCESS2, na.rm = TRUE) - min(ACCESS2, na.rm = TRUE)),
+    distance_scaled = (dist_to_nearest_km - min(dist_to_nearest_km, na.rm = TRUE)) / 
+      (max(dist_to_nearest_km, na.rm = TRUE) - min(dist_to_nearest_km, na.rm = TRUE)),
+    
+    # Composite need score (0-100 scale)
+    per_capita_need = (diabetes_scaled * 20 +
+                       ghlth_scaled * 20 +
+                       access_scaled * 20 +
+                       distance_scaled * 40) * 100,
+    
+    # Total need = per-capita need × population
+    total_need = per_capita_need * population
+  )
+```
+
+The composite need score weighs geographic access to existing facilities (40%), diabetes prevalence (20%), general health status (20%), and insurance coverage (20%).
+
+## Generate Candidate Sites
+
+We create potential clinic locations by sampling from parcel centroids within allowable zoning areas.
+
+```{r}
+set.seed(1983)
+
+candidate_sites <- allowable_land |>
+  st_centroid() |>
+  slice_sample(n = 50) |>
+  mutate(id = row_number())
+
+# Visualize the setup
+mapview(oahu_complete,
+        zcol = "total_need",
+        layer.name = "Total Need",
+        col.regions = RColorBrewer::brewer.pal(9, "YlOrRd"),
+        alpha.regions = 0.6) +
+  mapview(allowable_land,
+          col.regions = "lightgreen",
+          alpha.regions = 0.2,
+          layer.name = "Allowable Zones") +
+  mapview(candidate_sites,
+          col.regions = "blue",
+          cex = 3,
+          layer.name = "Candidate Sites") +
+  mapview(hospitals_and_clinics,
+          col.regions = "red",
+          cex = 5,
+          layer.name = "Existing Facilities")
+```
+
+## Spatial Optimization
+
+We use the `spopt` package to determine which 5 candidate sites would optimally serve Oahu's population. We compare three optimization objectives: maximizing total need addressed, maximizing population served, and minimizing maximum distance (equity).
+
+```{r}
+# Scenario 1: Maximize total need (population × health need)
+result_total_need <- p_median(
+  demand = oahu_complete,
+  facilities = candidate_sites,
+  n_facilities = 5,
+  weight_col = "total_need"
+)
+
+# Scenario 2: Maximize population served
+result_population <- p_median(
+  demand = oahu_complete,
+  facilities = candidate_sites,
+  n_facilities = 5,
+  weight_col = "population"
+)
+
+# Scenario 3: Equity (minimize maximum distance)
+result_equity <- p_center(
+  demand = oahu_complete,
+  facilities = candidate_sites,
+  n_facilities = 5
+)
+
+# Extract selected sites
+selected_total_need <- result_total_need$facilities |> filter(.selected)
+selected_population <- result_population$facilities |> filter(.selected)
+selected_equity <- result_equity$facilities |> filter(.selected)
+
+# Compare scenarios
+comparison <- tibble(
+  scenario = c("Total Need", "Population", "Equity"),
+  objective = c(
+    attr(result_total_need, "spopt")$objective,
+    attr(result_population, "spopt")$objective,
+    attr(result_equity, "spopt")$objective
+  ),
+  mean_distance = c(
+    attr(result_total_need, "spopt")$mean_distance,
+    attr(result_population, "spopt")$mean_distance,
+    attr(result_equity, "spopt")$objective
+  )
+)
+
+knitr::kable(comparison, digits = 0, 
+             caption = "Optimization scenario comparison")
+```
+
+## Results Visualization
+
+The "Total Need" scenario balances health burden, population size, and geographic access. We visualize the optimal clinic locations alongside existing facilities.
+
+```{r}
+mapview(oahu_complete, 
+        zcol = "total_need", 
+        alpha.regions = 0.5,
+        layer.name = "Total Need",
+        col.regions = RColorBrewer::brewer.pal(9, "YlOrRd")) +
+  mapview(allowable_land, 
+          col.regions = "lightgreen", 
+          alpha.regions = 0.2,
+          layer.name = "Allowable Zones") +
+  mapview(hospitals_and_clinics, 
+          col.regions = "red", 
+          cex = 5, 
+          layer.name = "Existing Facilities") +
+  mapview(selected_total_need, 
+          col.regions = "blue", 
+          cex = 8, 
+          layer.name = "Optimal New Sites")
+```
+
+## Discussion
+
+This analysis demonstrates how spatial optimization can inform public health resource allocation by combining multiple data sources: census demographics, disease prevalence, zoning constraints, and existing infrastructure.
+
+Key findings:
+
+-   Optimal clinic locations differ substantially depending on whether we prioritize efficiency (total need/population) versus equity (minimizing maximum distance)
+-   Zoning laws constrain where clinics can legally be placed, potentially creating structural barriers to health access in residential-only zones
+-   Spatial imputation allows us to optimize for the entire island despite incomplete health data coverage
+
+Future extensions could incorporate travel time instead of Euclidean distance, model facility capacity constraints, or conduct sensitivity analyses to assess how robust optimal locations are to different weighting schemes.
