@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>DS434 Spatial Analytics</title>
+<title>Hawaii Soil Orders GeoJSON Builder – DS434 Spatial Analytics</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,10 +20,44 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/quarto-nav/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -66,6 +100,9 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 </head>
@@ -88,7 +125,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -106,15 +143,24 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#step-1-fetch-soil-order-data-from-usda" id="toc-step-1-fetch-soil-order-data-from-usda" class="nav-link active" data-scroll-target="#step-1-fetch-soil-order-data-from-usda">Step 1: Fetch soil order data from USDA</a></li>
+  <li><a href="#step-2-fetch-soil-polygons-from-hawaii-state-geoportal" id="toc-step-2-fetch-soil-polygons-from-hawaii-state-geoportal" class="nav-link" data-scroll-target="#step-2-fetch-soil-polygons-from-hawaii-state-geoportal">Step 2: Fetch soil polygons from Hawaii State Geoportal</a></li>
+  <li><a href="#step-3-join-soil-orders-to-polygons" id="toc-step-3-join-soil-orders-to-polygons" class="nav-link" data-scroll-target="#step-3-join-soil-orders-to-polygons">Step 3: Join soil orders to polygons</a></li>
+  <li><a href="#step-4-export-to-geojson" id="toc-step-4-export-to-geojson" class="nav-link" data-scroll-target="#step-4-export-to-geojson">Step 4: Export to GeoJSON</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">DS434 Spatial Analytics</h1>
+<h1 class="title">Hawaii Soil Orders GeoJSON Builder</h1>
 </div>
 
 
@@ -131,12 +177,209 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Welcome to DS434!</p>
-<ul>
-<li>[Spatial Optimization Assignment](spopt.html)</li>
-</ul>
+<p>Downloads soil polygons from the Hawaii State Geoportal and joins soil orders (Andisols, Oxisols, Ultisols, etc.) from the USDA database into a single GeoJSON file.</p>
+<div id="cell-2" class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install requests geopandas</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-3" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="step-1-fetch-soil-order-data-from-usda" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-fetch-soil-order-data-from-usda">Step 1: Fetch soil order data from USDA</h2>
+<div id="cell-5" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>sda_url <span class="op">=</span> <span class="st">"https://sdmdataaccess.nrcs.usda.gov/tabular/post.rest"</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>query <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT mu.mukey, mu.muname, mu.musym, c.taxorder, c.taxsuborder, c.compname</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="st">FROM mapunit mu</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="st">JOIN component c ON mu.mukey = c.mukey</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="st">JOIN legend l ON mu.lkey = l.lkey</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="st">WHERE l.areasymbol LIKE 'HI%'</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="st">AND c.majcompflag = 'Yes'</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>resp <span class="op">=</span> requests.post(sda_url, data<span class="op">=</span>{<span class="st">"request"</span>: <span class="st">"query"</span>, <span class="st">"query"</span>: query, <span class="st">"format"</span>: <span class="st">"JSON"</span>}, timeout<span class="op">=</span><span class="dv">60</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>resp.raise_for_status()</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>rows <span class="op">=</span> resp.json().get(<span class="st">"Table"</span>, [])</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>soil_df <span class="op">=</span> pd.DataFrame(rows, columns<span class="op">=</span>[<span class="st">"mukey"</span>, <span class="st">"muname"</span>, <span class="st">"musym"</span>, <span class="st">"taxorder"</span>, <span class="st">"taxsuborder"</span>, <span class="st">"compname"</span>])</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>soil_df[<span class="st">"mukey"</span>] <span class="op">=</span> soil_df[<span class="st">"mukey"</span>].astype(<span class="bu">str</span>)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Got </span><span class="sc">{</span><span class="bu">len</span>(soil_df)<span class="sc">}</span><span class="ss"> soil records"</span>)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>soil_df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Got 1570 soil records</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<div>
 
 
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">mukey</th>
+<th data-quarto-table-cell-role="th">muname</th>
+<th data-quarto-table-cell-role="th">musym</th>
+<th data-quarto-table-cell-role="th">taxorder</th>
+<th data-quarto-table-cell-role="th">taxsuborder</th>
+<th data-quarto-table-cell-role="th">compname</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>2371887</td>
+<td>Lava flows, `a`a, 2 to 20 percent slopes</td>
+<td>10</td>
+<td>None</td>
+<td>None</td>
+<td>Lava flows</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>2371889</td>
+<td>Lava flows, pahoehoe, 2 to 20 percent slopes</td>
+<td>12</td>
+<td>None</td>
+<td>None</td>
+<td>Lava flows</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>2371891</td>
+<td>Lava flows complex, 2 to 20 percent slopes</td>
+<td>14</td>
+<td>None</td>
+<td>None</td>
+<td>Lava flows</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>2371891</td>
+<td>Lava flows complex, 2 to 20 percent slopes</td>
+<td>14</td>
+<td>None</td>
+<td>None</td>
+<td>Lava flows</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>2371892</td>
+<td>Cinder land, 2 to 20 percent slopes</td>
+<td>15</td>
+<td>None</td>
+<td>None</td>
+<td>Cinder land</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="step-2-fetch-soil-polygons-from-hawaii-state-geoportal" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-fetch-soil-polygons-from-hawaii-state-geoportal">Step 2: Fetch soil polygons from Hawaii State Geoportal</h2>
+<div id="cell-7" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correct URL: Hawaii geodata MapServer layer 42 = Soils (Areas) polygons</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>geoportal_url <span class="op">=</span> <span class="st">"https://geodata.hawaii.gov/arcgis/rest/services/Terrestrial/MapServer/42/query"</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>all_features <span class="op">=</span> []</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>offset <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>batch <span class="op">=</span> <span class="dv">1000</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="va">True</span>:</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    params <span class="op">=</span> {</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"where"</span>: <span class="st">"1=1"</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"outFields"</span>: <span class="st">"mukey,musym,areasymbol"</span>,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"f"</span>: <span class="st">"geojson"</span>,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"resultOffset"</span>: offset,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">"resultRecordCount"</span>: batch,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    r <span class="op">=</span> requests.get(geoportal_url, params<span class="op">=</span>params, timeout<span class="op">=</span><span class="dv">120</span>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    r.raise_for_status()</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    features <span class="op">=</span> r.json().get(<span class="st">"features"</span>, [])</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    all_features.extend(features)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  Downloaded </span><span class="sc">{</span><span class="bu">len</span>(all_features)<span class="sc">}</span><span class="ss"> polygons..."</span>)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(features) <span class="op">&lt;</span> batch:</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    offset <span class="op">+=</span> batch</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Done: </span><span class="sc">{</span><span class="bu">len</span>(all_features)<span class="sc">}</span><span class="ss"> polygons total"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Downloaded 1000 polygons...
+  Downloaded 2000 polygons...
+  Downloaded 3000 polygons...
+  Downloaded 4000 polygons...
+  Downloaded 5000 polygons...
+  Downloaded 6000 polygons...
+  Downloaded 7000 polygons...
+  Downloaded 8000 polygons...
+  Downloaded 9000 polygons...
+  Downloaded 10000 polygons...
+  Downloaded 11000 polygons...
+  Downloaded 12000 polygons...
+  Downloaded 13000 polygons...
+  Downloaded 14000 polygons...
+  Downloaded 15000 polygons...
+  Downloaded 16000 polygons...
+  Downloaded 17000 polygons...
+  Downloaded 18000 polygons...
+  Downloaded 19000 polygons...
+  Downloaded 20000 polygons...
+  Downloaded 21000 polygons...
+  Downloaded 22000 polygons...
+  Downloaded 23000 polygons...
+  Downloaded 23257 polygons...
+Done: 23257 polygons total</code></pre>
+</div>
+</div>
+</section>
+<section id="step-3-join-soil-orders-to-polygons" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-join-soil-orders-to-polygons">Step 3: Join soil orders to polygons</h2>
+<div id="cell-9" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>geojson_collection <span class="op">=</span> {<span class="st">"type"</span>: <span class="st">"FeatureCollection"</span>, <span class="st">"features"</span>: all_features}</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>gdf <span class="op">=</span> gpd.GeoDataFrame.from_features(geojson_collection, crs<span class="op">=</span><span class="st">"EPSG:4326"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>gdf[<span class="st">"mukey"</span>] <span class="op">=</span> gdf[<span class="st">"mukey"</span>].astype(<span class="bu">str</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>gdf <span class="op">=</span> gdf.merge(soil_df[[<span class="st">"mukey"</span>, <span class="st">"taxorder"</span>, <span class="st">"taxsuborder"</span>, <span class="st">"compname"</span>, <span class="st">"muname"</span>]], on<span class="op">=</span><span class="st">"mukey"</span>, how<span class="op">=</span><span class="st">"left"</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>matched <span class="op">=</span> gdf[<span class="st">"taxorder"</span>].notna().<span class="bu">sum</span>()</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>matched<span class="sc">}</span><span class="ss"> of </span><span class="sc">{</span><span class="bu">len</span>(gdf)<span class="sc">}</span><span class="ss"> polygons matched with a soil order"</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gdf[<span class="st">"taxorder"</span>].value_counts())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>21375 of 27299 polygons matched with a soil order
+taxorder
+Oxisols        5283
+Andisols       5041
+Mollisols      2276
+Ultisols       2073
+Inceptisols    2034
+Histosols      1836
+Entisols       1702
+Vertisols       566
+Aridisols       494
+Spodosols        70
+Name: count, dtype: int64</code></pre>
+</div>
+</div>
+</section>
+<section id="step-4-export-to-geojson" class="level2">
+<h2 class="anchored" data-anchor-id="step-4-export-to-geojson">Step 4: Export to GeoJSON</h2>
+<div id="cell-11" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>out_file <span class="op">=</span> <span class="st">"hawaii_soils_with_orders.geojson"</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>gdf.to_file(out_file, driver<span class="op">=</span><span class="st">"GeoJSON"</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Saved to: </span><span class="sc">{</span>out_file<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Saved to: hawaii_soils_with_orders.geojson</code></pre>
+</div>
+</div>
+
+
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

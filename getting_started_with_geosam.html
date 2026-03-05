@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>getting_started_with_geosam – DS434 Spatial Analytics</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-6bd9cfa162949bde0a231f530c97869d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">DS434 Spatial Analytics</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./spopt.html"> 
+<span class="menu-text">Spatial Optimization</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#getting-started-with-geosam" id="toc-getting-started-with-geosam" class="nav-link active" data-scroll-target="#getting-started-with-geosam">Getting Started with geosam</a>
+  <ul class="collapse">
+  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#step-1-install-the-r-package" id="toc-step-1-install-the-r-package" class="nav-link" data-scroll-target="#step-1-install-the-r-package">Step 1: Install the R Package</a></li>
+  <li><a href="#step-2-create-a-huggingface-account" id="toc-step-2-create-a-huggingface-account" class="nav-link" data-scroll-target="#step-2-create-a-huggingface-account">Step 2: Create a HuggingFace Account</a></li>
+  <li><a href="#step-3-request-access-to-sam3-model" id="toc-step-3-request-access-to-sam3-model" class="nav-link" data-scroll-target="#step-3-request-access-to-sam3-model">Step 3: Request Access to SAM3 Model</a></li>
+  <li><a href="#step-4-create-a-huggingface-access-token" id="toc-step-4-create-a-huggingface-access-token" class="nav-link" data-scroll-target="#step-4-create-a-huggingface-access-token">Step 4: Create a HuggingFace Access Token</a>
+  <ul class="collapse">
+  <li><a href="#add-your-token-to-.renviron" id="toc-add-your-token-to-.renviron" class="nav-link" data-scroll-target="#add-your-token-to-.renviron">Add your token to .Renviron</a></li>
+  </ul></li>
+  <li><a href="#step-5-set-up-python-environment" id="toc-step-5-set-up-python-environment" class="nav-link" data-scroll-target="#step-5-set-up-python-environment">Step 5: Set Up Python Environment</a>
+  <ul class="collapse">
+  <li><a href="#troubleshooting-python-installation" id="toc-troubleshooting-python-installation" class="nav-link" data-scroll-target="#troubleshooting-python-installation">Troubleshooting Python Installation</a></li>
+  </ul></li>
+  <li><a href="#step-6-fix-spatial-libraries-critical-step" id="toc-step-6-fix-spatial-libraries-critical-step" class="nav-link" data-scroll-target="#step-6-fix-spatial-libraries-critical-step">Step 6: Fix Spatial Libraries (Critical Step!)</a>
+  <ul class="collapse">
+  <li><a href="#a.-reinstall-sf-and-terra-from-source" id="toc-a.-reinstall-sf-and-terra-from-source" class="nav-link" data-scroll-target="#a.-reinstall-sf-and-terra-from-source">6a. Reinstall sf and terra from source</a></li>
+  <li><a href="#b.-find-your-proj-database-location" id="toc-b.-find-your-proj-database-location" class="nav-link" data-scroll-target="#b.-find-your-proj-database-location">6b. Find your PROJ database location</a></li>
+  <li><a href="#c.-set-proj_lib-environment-variable" id="toc-c.-set-proj_lib-environment-variable" class="nav-link" data-scroll-target="#c.-set-proj_lib-environment-variable">6c. Set PROJ_LIB environment variable</a></li>
+  </ul></li>
+  <li><a href="#step-7-verify-your-setup" id="toc-step-7-verify-your-setup" class="nav-link" data-scroll-target="#step-7-verify-your-setup">Step 7: Verify Your Setup</a></li>
+  <li><a href="#step-8-set-up-imagery-api-keys-optional" id="toc-step-8-set-up-imagery-api-keys-optional" class="nav-link" data-scroll-target="#step-8-set-up-imagery-api-keys-optional">Step 8: Set Up Imagery API Keys (Optional)</a>
+  <ul class="collapse">
+  <li><a href="#mapbox-high-quality" id="toc-mapbox-high-quality" class="nav-link" data-scroll-target="#mapbox-high-quality">Mapbox (High Quality)</a></li>
+  <li><a href="#esri-free-no-account-needed" id="toc-esri-free-no-account-needed" class="nav-link" data-scroll-target="#esri-free-no-account-needed">Esri (Free, No Account Needed)</a></li>
+  </ul></li>
+  <li><a href="#your-first-detection" id="toc-your-first-detection" class="nav-link" data-scroll-target="#your-first-detection">Your First Detection</a>
+  <ul class="collapse">
+  <li><a href="#example-detect-football-fields" id="toc-example-detect-football-fields" class="nav-link" data-scroll-target="#example-detect-football-fields">Example: Detect football fields</a></li>
+  </ul></li>
+  <li><a href="#common-issues-solutions" id="toc-common-issues-solutions" class="nav-link" data-scroll-target="#common-issues-solutions">Common Issues &amp; Solutions</a>
+  <ul class="collapse">
+  <li><a href="#cannot-transform-sfc-object-with-missing-crs" id="toc-cannot-transform-sfc-object-with-missing-crs" class="nav-link" data-scroll-target="#cannot-transform-sfc-object-with-missing-crs">“cannot transform sfc object with missing crs”</a></li>
+  <li><a href="#could-not-find-a-version-that-satisfies-the-requirement-torch2.7" id="toc-could-not-find-a-version-that-satisfies-the-requirement-torch2.7" class="nav-link" data-scroll-target="#could-not-find-a-version-that-satisfies-the-requirement-torch2.7">“Could not find a version that satisfies the requirement torch&gt;=2.7”</a></li>
+  <li><a href="#proj-proj_create_from_database-cannot-find-proj.db" id="toc-proj-proj_create_from_database-cannot-find-proj.db" class="nav-link" data-scroll-target="#proj-proj_create_from_database-cannot-find-proj.db">“PROJ: proj_create_from_database: Cannot find proj.db”</a></li>
+  <li><a href="#version-mismatch-e.g.-sf-wants-9.5.1-but-you-have-9.4.1" id="toc-version-mismatch-e.g.-sf-wants-9.5.1-but-you-have-9.4.1" class="nav-link" data-scroll-target="#version-mismatch-e.g.-sf-wants-9.5.1-but-you-have-9.4.1">Version mismatch (e.g., sf wants 9.5.1 but you have 9.4.1)</a></li>
+  </ul></li>
+  <li><a href="#tips-for-success" id="toc-tips-for-success" class="nav-link" data-scroll-target="#tips-for-success">Tips for Success</a></li>
+  <li><a href="#additional-resources" id="toc-additional-resources" class="nav-link" data-scroll-target="#additional-resources">Additional Resources</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+
+
+
+
+<section id="getting-started-with-geosam" class="level1">
+<h1>Getting Started with geosam</h1>
+<p>A step-by-step guide for setting up and using the <code>geosam</code> package for object detection in satellite imagery using Meta’s SAM3 model.</p>
+<p><strong>Official Documentation</strong>: <a href="https://walker-data.com/geosam/">walker-data.com/geosam</a><br>
+<strong>Getting Started Vignette</strong>: <a href="https://walker-data.com/geosam/articles/getting-started.html">Getting started with geosam</a></p>
+<hr>
+<section id="overview" class="level2">
+<h2 class="anchored" data-anchor-id="overview">Overview</h2>
+<p>The <code>geosam</code> package brings Meta’s Segment Anything Model 3 (SAM3) to R for detecting objects in satellite imagery and photos. You can describe what you’re looking for in plain text—no training data or model fine-tuning required.</p>
+<p><strong>Estimated setup time</strong>: 30-45 minutes</p>
+<hr>
+</section>
+<section id="step-1-install-the-r-package" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-install-the-r-package">Step 1: Install the R Package</h2>
+<p>Install the development version from GitHub:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install remotes if you don't have it</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"remotes"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Install geosam</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"walkerke/geosam"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Or using <code>pak</code>:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pak</span>(<span class="st">"walkerke/geosam"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+<section id="step-2-create-a-huggingface-account" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-create-a-huggingface-account">Step 2: Create a HuggingFace Account</h2>
+<ol type="1">
+<li>Go to <a href="https://huggingface.co/">huggingface.co</a></li>
+<li>Click “Sign Up” and create a free account</li>
+<li>Verify your email address</li>
+</ol>
+<hr>
+</section>
+<section id="step-3-request-access-to-sam3-model" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-request-access-to-sam3-model">Step 3: Request Access to SAM3 Model</h2>
+<ol type="1">
+<li>Visit the <a href="https://huggingface.co/facebook/sam3">SAM3 model page</a></li>
+<li>Click “<strong>Request access</strong>” button</li>
+<li>Access is typically granted within a few minutes to a few hours</li>
+</ol>
+<hr>
+</section>
+<section id="step-4-create-a-huggingface-access-token" class="level2">
+<h2 class="anchored" data-anchor-id="step-4-create-a-huggingface-access-token">Step 4: Create a HuggingFace Access Token</h2>
+<ol type="1">
+<li>Log into your HuggingFace account</li>
+<li>Go to <strong>Settings</strong> &gt; <strong>Access Tokens</strong></li>
+<li>Click “<strong>New token</strong>”</li>
+<li>Name it (e.g., “geosam”)</li>
+<li>Select “<strong>Read</strong>” permissions (sufficient for downloading models)</li>
+<li>Click “<strong>Generate token</strong>”</li>
+<li><strong>Copy the token</strong> (starts with <code>hf_...</code>)</li>
+</ol>
+<section id="add-your-token-to-.renviron" class="level3">
+<h3 class="anchored" data-anchor-id="add-your-token-to-.renviron">Add your token to .Renviron</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Open your .Renviron file</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">edit_r_environ</span>()</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Add this line (replace with your actual token):</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>HF_TOKEN<span class="ot">=</span>hf_xxxxxxxxxxxxxxxxxxxxx</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Save, close, and restart R</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+</section>
+<section id="step-5-set-up-python-environment" class="level2">
+<h2 class="anchored" data-anchor-id="step-5-set-up-python-environment">Step 5: Set Up Python Environment</h2>
+<p>Load the package and install the Python environment:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geosam)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">geosam_install</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="troubleshooting-python-installation" class="level3">
+<h3 class="anchored" data-anchor-id="troubleshooting-python-installation">Troubleshooting Python Installation</h3>
+<p>If <code>geosam_install()</code> fails, try these alternatives:</p>
+<p><strong>If you get “uv is not installed”:</strong></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use virtualenv instead</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">geosam_install</span>(<span class="at">method =</span> <span class="st">"virtualenv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>If using conda and you have Python 3.11+ available:</strong></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use conda's Python for virtualenv</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">geosam_install</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"virtualenv"</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">python_version =</span> <span class="st">"/opt/anaconda3/bin/python3"</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>If conda fails with architecture errors (Mac M1/M2/M3):</strong></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Force ARM64 architecture</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.setenv</span>(<span class="at">CONDA_SUBDIR =</span> <span class="st">"osx-arm64"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">geosam_install</span>(<span class="at">method =</span> <span class="st">"conda"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+</section>
+<section id="step-6-fix-spatial-libraries-critical-step" class="level2">
+<h2 class="anchored" data-anchor-id="step-6-fix-spatial-libraries-critical-step">Step 6: Fix Spatial Libraries (Critical Step!)</h2>
+<p>This is the most common issue. The <code>sf</code> and <code>terra</code> packages need to be properly configured to work with PROJ/GDAL.</p>
+<section id="a.-reinstall-sf-and-terra-from-source" class="level3">
+<h3 class="anchored" data-anchor-id="a.-reinstall-sf-and-terra-from-source">6a. Reinstall sf and terra from source</h3>
+<p>This ensures they’re compiled against your current PROJ installation:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">"sf"</span>, <span class="st">"terra"</span>), <span class="at">type =</span> <span class="st">"source"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Note</strong>: This may take 5-10 minutes as it compiles from source.</p>
+</section>
+<section id="b.-find-your-proj-database-location" class="level3">
+<h3 class="anchored" data-anchor-id="b.-find-your-proj-database-location">6b. Find your PROJ database location</h3>
+<p><strong>On macOS:</strong></p>
+<p>First, check if the generic path exists (recommended, as it’s version-agnostic):</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for generic path</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="st">"ls -la /opt/homebrew/share/proj/proj.db"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>If that file exists, you’ll use <code>/opt/homebrew/share/proj</code> in the next step.</p>
+<p>If the generic path doesn’t exist, find the version-specific path:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find version-specific path</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="st">"find /opt/homebrew -name proj.db 2&gt;/dev/null"</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Or for Intel Macs:</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="st">"find /usr/local -name proj.db 2&gt;/dev/null"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You’ll get output like:</p>
+<pre><code>/opt/homebrew/Cellar/proj/9.4.1/share/proj/proj.db</code></pre>
+</section>
+<section id="c.-set-proj_lib-environment-variable" class="level3">
+<h3 class="anchored" data-anchor-id="c.-set-proj_lib-environment-variable">6c. Set PROJ_LIB environment variable</h3>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Open .Renviron</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">edit_r_environ</span>()</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Add ONE of these lines based on what you found in step 6b:</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Option 1: If generic path exists (recommended):</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>PROJ_LIB<span class="ot">=</span><span class="er">/</span>opt<span class="sc">/</span>homebrew<span class="sc">/</span>share<span class="sc">/</span>proj</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Option 2: If only version-specific path exists:</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>PROJ_LIB<span class="ot">=</span><span class="er">/</span>opt<span class="sc">/</span>homebrew<span class="sc">/</span>Cellar<span class="sc">/</span>proj<span class="sc">/</span><span class="dv">9</span>.<span class="fl">4.1</span><span class="sc">/</span>share<span class="sc">/</span>proj</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Save, close, and RESTART R completely</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Note</strong>: After reinstalling sf/terra from source, you may not need the PROJ_LIB variable at all. Test your setup in Step 7 first, and only add PROJ_LIB if you still get PROJ errors.</p>
+<hr>
+</section>
+</section>
+<section id="step-7-verify-your-setup" class="level2">
+<h2 class="anchored" data-anchor-id="step-7-verify-your-setup">Step 7: Verify Your Setup</h2>
+<p>After restarting R, verify everything is working:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geosam)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Check geosam status</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">geosam_status</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You should see all green checkmarks:</p>
+<pre><code>── geosam Status ───────────────────────────────────────────
+✔ Environment: virtualenv at ~/.../geosam
+✔ Python: 3.11
+✔ PyTorch 2.9.1: MPS (Apple Silicon) or CPU
+✔ transformers: available (SAM3 via HuggingFace)
+✔ HuggingFace token: configured</code></pre>
+<hr>
+</section>
+<section id="step-8-set-up-imagery-api-keys-optional" class="level2">
+<h2 class="anchored" data-anchor-id="step-8-set-up-imagery-api-keys-optional">Step 8: Set Up Imagery API Keys (Optional)</h2>
+<p>For satellite imagery, you can use Mapbox for high-quality imagery or Esri for free access.</p>
+<section id="mapbox-high-quality" class="level3">
+<h3 class="anchored" data-anchor-id="mapbox-high-quality">Mapbox (High Quality)</h3>
+<ol type="1">
+<li>Create account at <a href="https://www.mapbox.com/">mapbox.com</a></li>
+<li>Get your public token from your account dashboard</li>
+<li>Add to .Renviron:</li>
+</ol>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Open your .Renviron file</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">edit_r_environ</span>()</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Add this line (replace with your actual token):</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>MAPBOX_PUBLIC_TOKEN<span class="ot">=</span>pk.xxxxxxxxxxxxxxxxxxxxx</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Save, close, and restart R</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="esri-free-no-account-needed" class="level3">
+<h3 class="anchored" data-anchor-id="esri-free-no-account-needed">Esri (Free, No Account Needed)</h3>
+<p>No setup required! Just use <code>source = "esri"</code> in your detection calls.</p>
+<hr>
+</section>
+</section>
+<section id="your-first-detection" class="level2">
+<h2 class="anchored" data-anchor-id="your-first-detection">Your First Detection</h2>
+<section id="example-detect-football-fields" class="level3">
+<h3 class="anchored" data-anchor-id="example-detect-football-fields">Example: Detect football fields</h3>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geosam)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Detect football fields at TCU campus</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>field <span class="ot">&lt;-</span> <span class="fu">sam_detect</span>(</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">bbox =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">97.372</span>, <span class="fl">32.707</span>, <span class="sc">-</span><span class="fl">97.366</span>, <span class="fl">32.712</span>),</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">text =</span> <span class="st">"football field"</span>,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">source =</span> <span class="st">"esri"</span>,  <span class="co"># Free, no API key needed</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">zoom =</span> <span class="dv">17</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co"># View results</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(field)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+</section>
+<section id="common-issues-solutions" class="level2">
+<h2 class="anchored" data-anchor-id="common-issues-solutions">Common Issues &amp; Solutions</h2>
+<section id="cannot-transform-sfc-object-with-missing-crs" class="level3">
+<h3 class="anchored" data-anchor-id="cannot-transform-sfc-object-with-missing-crs">“cannot transform sfc object with missing crs”</h3>
+<p><strong>Solution</strong>: Add PROJ_LIB to your .Renviron file (Step 6c) and restart R. Make sure you’ve also reinstalled sf/terra from source (Step 6a).</p>
+</section>
+<section id="could-not-find-a-version-that-satisfies-the-requirement-torch2.7" class="level3">
+<h3 class="anchored" data-anchor-id="could-not-find-a-version-that-satisfies-the-requirement-torch2.7">“Could not find a version that satisfies the requirement torch&gt;=2.7”</h3>
+<p><strong>Solution</strong>: You need Python 3.9 or newer. Use Anaconda’s Python:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">geosam_install</span>(</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"virtualenv"</span>,</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">python_version =</span> <span class="st">"/opt/anaconda3/bin/python3"</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="proj-proj_create_from_database-cannot-find-proj.db" class="level3">
+<h3 class="anchored" data-anchor-id="proj-proj_create_from_database-cannot-find-proj.db">“PROJ: proj_create_from_database: Cannot find proj.db”</h3>
+<p><strong>Solution</strong>: PROJ_LIB path is incorrect or not set. Follow Steps 6b and 6c to find the correct path and add it to your .Renviron file.</p>
+</section>
+<section id="version-mismatch-e.g.-sf-wants-9.5.1-but-you-have-9.4.1" class="level3">
+<h3 class="anchored" data-anchor-id="version-mismatch-e.g.-sf-wants-9.5.1-but-you-have-9.4.1">Version mismatch (e.g., sf wants 9.5.1 but you have 9.4.1)</h3>
+<p><strong>Solution</strong>: Update PROJ via Homebrew:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># In terminal</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> upgrade proj</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Then restart R and reinstall sf/terra from source (Step 6a).</p>
+<hr>
+</section>
+</section>
+<section id="tips-for-success" class="level2">
+<h2 class="anchored" data-anchor-id="tips-for-success">Tips for Success</h2>
+<ol type="1">
+<li><strong>Always use .Renviron</strong> for environment variables (HF_TOKEN, MAPBOX_PUBLIC_TOKEN, PROJ_LIB)</li>
+<li><strong>Restart R completely</strong> after editing .Renviron</li>
+<li><strong>Start with small bounding boxes</strong> (~0.005° × 0.005°) to test</li>
+<li><strong>Use zoom 18-19 for small objects</strong> like solar panels, cars</li>
+<li><strong>Use zoom 15-17 for large objects</strong> like buildings, fields</li>
+<li><strong>Try different text prompts</strong> if detection quality is poor</li>
+<li><strong>Use Esri source</strong> for quick tests (no API key needed)</li>
+</ol>
+<hr>
+</section>
+<section id="additional-resources" class="level2">
+<h2 class="anchored" data-anchor-id="additional-resources">Additional Resources</h2>
+<ul>
+<li><strong>Official Documentation</strong>: <a href="https://walker-data.com/geosam/">walker-data.com/geosam</a></li>
+<li><strong>Getting Started Vignette</strong>: <a href="https://walker-data.com/geosam/articles/getting-started.html">Detailed walkthrough</a></li>
+<li><strong>Satellite Imagery Detection</strong>: <a href="https://walker-data.com/geosam/articles/satellite-imagery.html">Advanced techniques</a></li>
+<li><strong>GitHub Issues</strong>: <a href="https://github.com/walkerke/geosam/issues">Report problems</a></li>
+</ul>
+<hr>
+<p><strong>Questions or issues?</strong> File an issue on <a href="https://github.com/walkerke/geosam/issues">GitHub</a> or contact Kyle Walker.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/NSF-ALL-SPICE-Alliance\.github\.io\/DS434-Spatial-Analytics\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
